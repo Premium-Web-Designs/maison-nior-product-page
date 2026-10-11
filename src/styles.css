@@ -1,0 +1,359 @@
+@import "tailwindcss" source(none);
+@source "../src";
+@import "tw-animate-css";
+
+@custom-variant dark (&:is(.dark *));
+
+/*
+ * Design system definition.
+ *
+ * The @theme inline block maps CSS custom properties to Tailwind utility
+ * classes (e.g. --color-primary -> bg-primary, text-primary).
+ *
+ * The :root and .dark blocks define the actual color values using oklch.
+ * All colors MUST use oklch format.
+ *
+ * To add a new semantic color:
+ * 1. Add the variable to :root (light value) and .dark (dark value)
+ * 2. Register it in @theme inline as --color-<name>: var(--<name>)
+ */
+
+@theme inline {
+  --radius-sm: calc(var(--radius) - 4px);
+  --radius-md: calc(var(--radius) - 2px);
+  --radius-lg: var(--radius);
+  --radius-xl: calc(var(--radius) + 4px);
+  --font-display: "Space Grotesk", ui-sans-serif, system-ui, sans-serif;
+  --font-sans: "DM Sans", ui-sans-serif, system-ui, sans-serif;
+  --font-serif: "Cormorant Garamond", ui-serif, Georgia, serif;
+  --color-background: var(--background);
+  --color-foreground: var(--foreground);
+  --color-card: var(--card);
+  --color-card-foreground: var(--card-foreground);
+  --color-popover: var(--popover);
+  --color-popover-foreground: var(--popover-foreground);
+  --color-primary: var(--primary);
+  --color-primary-foreground: var(--primary-foreground);
+  --color-secondary: var(--secondary);
+  --color-secondary-foreground: var(--secondary-foreground);
+  --color-muted: var(--muted);
+  --color-muted-foreground: var(--muted-foreground);
+  --color-accent: var(--accent);
+  --color-accent-foreground: var(--accent-foreground);
+  --color-destructive: var(--destructive);
+  --color-destructive-foreground: var(--destructive-foreground);
+  --color-border: var(--border);
+  --color-input: var(--input);
+  --color-ring: var(--ring);
+  --color-ink: var(--ink);
+  --color-smoke: var(--smoke);
+  --color-champagne: var(--champagne);
+}
+
+:root {
+  --radius: 0.125rem;
+  --background: oklch(0.16 0.006 260);
+  --ink: oklch(0.145 0.006 260);
+  --foreground: oklch(0.93 0.01 85);
+  --card: oklch(0.2 0.006 260);
+  --card-foreground: oklch(0.93 0.01 85);
+  --popover: oklch(0.2 0.006 260);
+  --popover-foreground: oklch(0.93 0.01 85);
+  --primary: oklch(0.93 0.01 85);
+  --primary-foreground: oklch(0.145 0.006 260);
+  --secondary: oklch(0.28 0.008 260);
+  --secondary-foreground: oklch(0.93 0.01 85);
+  --muted: oklch(0.23 0.006 260);
+  --muted-foreground: oklch(0.68 0.006 85);
+  --accent: oklch(0.26 0.008 260);
+  --accent-foreground: oklch(0.93 0.01 85);
+  --destructive: oklch(0.577 0.245 27.325);
+  --destructive-foreground: oklch(0.985 0 0);
+  --border: oklch(1 0 0 / 12%);
+  --input: oklch(1 0 0 / 14%);
+  --ring: oklch(0.8 0.02 90);
+  --smoke: oklch(0.78 0.006 85);
+  --champagne: oklch(0.78 0.013 85);
+
+  --gradient-vignette: radial-gradient(
+    120% 90% at 50% 15%,
+    color-mix(in oklab, var(--background) 55%, transparent) 0%,
+    var(--ink) 78%
+  );
+  --gradient-hairline: linear-gradient(
+    90deg,
+    transparent,
+    color-mix(in oklab, var(--champagne) 55%, transparent),
+    transparent
+  );
+  --shadow-lift: 0 40px 120px -60px oklch(0 0 0 / 0.9);
+  --ease-lux: cubic-bezier(0.16, 1, 0.3, 1);
+}
+
+@layer base {
+  * {
+    border-color: var(--color-border);
+  }
+
+  html {
+    -webkit-font-smoothing: antialiased;
+  }
+
+  body {
+    background-color: var(--color-ink);
+    color: var(--color-foreground);
+    font-family: var(--font-sans);
+    font-weight: 300;
+  }
+
+  ::selection {
+    background: color-mix(in oklab, var(--champagne) 30%, transparent);
+  }
+}
+
+@utility display {
+  font-family: var(--font-display);
+  font-weight: 600;
+  letter-spacing: 0;
+  line-height: 1;
+}
+
+@utility statement {
+  font-family: var(--font-display);
+  font-size: clamp(3.5rem, 12vw, 12rem);
+  font-weight: 700;
+  letter-spacing: 0;
+  line-height: 0.88;
+  overflow-wrap: anywhere;
+}
+
+@utility eyebrow {
+  font-family: var(--font-sans);
+  font-size: 0.66rem;
+  font-weight: 400;
+  letter-spacing: 0.18em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+}
+
+@utility hairline {
+  height: 1px;
+  width: 100%;
+  background-image: var(--gradient-hairline);
+}
+
+@utility vignette {
+  background-image: var(--gradient-vignette);
+}
+
+@utility reveal-up {
+  opacity: 0;
+  transform: translate3d(0, 28px, 0);
+  transition:
+    opacity 1.1s var(--ease-lux),
+    transform 1.1s var(--ease-lux);
+}
+
+@utility reveal-in {
+  opacity: 1;
+  transform: translate3d(0, 0, 0);
+}
+
+/* ------------------------------------------------------------------
+ * Cinematic noir motion system.
+ * Values come from MotionScene: --e0…--e5 (eased, staggered entrance),
+ * --x (exit), --p (pinned travel). Opacity, transform and a whisper of
+ * blur only — nothing bounces, nothing rounds, nothing flashes.
+ * ------------------------------------------------------------------ */
+
+@utility accent-serif {
+  font-family: var(--font-serif);
+  font-style: italic;
+  font-weight: 300;
+  font-size: 1.12em;
+  line-height: 0.9;
+  letter-spacing: -0.01em;
+  color: var(--champagne);
+}
+
+@utility motion-title {
+  display: block;
+}
+
+@utility motion-line {
+  display: block;
+  --le: var(--e1);
+  --dir: -1;
+  will-change: transform, opacity, filter;
+  opacity: var(--le);
+  filter: blur(calc((1 - var(--le)) * 10px));
+  transform: translate3d(calc((1 - var(--le)) * var(--dir) * 0.32em), 0, 0)
+    scale(calc(1.035 - var(--le) * 0.035));
+  transform-origin: left 70%;
+  &[data-line="1"] { --le: var(--e2); --dir: 1; }
+  &[data-line="2"] { --le: var(--e3); --dir: -1; }
+}
+
+@utility motion-meta {
+  display: flex;
+  align-items: center;
+  gap: 1.25rem;
+  font-family: var(--font-sans);
+  font-size: 0.62rem;
+  font-weight: 400;
+  letter-spacing: 0.42em;
+  text-transform: uppercase;
+  color: var(--color-muted-foreground);
+  & .motion-meta-label {
+    opacity: var(--e1);
+    filter: blur(calc((1 - var(--e1)) * 6px));
+  }
+  & .motion-rule:last-child { display: none; }
+}
+
+@utility motion-rule {
+  display: block;
+  height: 1px;
+  width: 3rem;
+  background: color-mix(in oklab, var(--foreground) 28%, transparent);
+  transform: scaleX(var(--e0));
+  transform-origin: right center;
+}
+
+@utility motion-stage {
+  will-change: transform, opacity;
+  opacity: calc(1 - var(--x) * 0.55);
+  transform: translate3d(0, calc(var(--x) * -6vh), 0) scale(calc(1 - var(--x) * 0.04));
+  transform-origin: center top;
+}
+
+@utility motion-veil {
+  pointer-events: none;
+  opacity: calc((1 - var(--e0)) * 0.92 + var(--x) * 0.5);
+}
+
+@utility motion-image {
+  will-change: transform;
+  transform: scale(calc(1.09 - var(--e0) * 0.06 - var(--p) * 0.03))
+    translate3d(0, calc((0.5 - var(--p)) * 3%), 0);
+}
+
+@utility motion-out {
+  will-change: transform, opacity, filter;
+  opacity: calc(1 - var(--x) * 1.4);
+  filter: blur(calc(var(--x) * 8px));
+  transform: translate3d(0, calc(var(--x) * -4vh), 0);
+}
+
+@utility motion-fade {
+  will-change: transform, opacity, filter;
+  opacity: var(--e3);
+  filter: blur(calc((1 - var(--e3)) * 6px));
+  transform: translate3d(0, calc((1 - var(--e3)) * 14px), 0);
+}
+
+@utility motion-fade-late {
+  will-change: transform, opacity;
+  opacity: var(--e4);
+  transform: translate3d(0, calc((1 - var(--e4)) * 10px), 0);
+}
+
+@utility motion-axis {
+  transform: scaleY(var(--e0));
+  transform-origin: center top;
+  opacity: calc(var(--e0) * (1 - var(--x)));
+}
+
+@utility motion-rule-x {
+  position: relative;
+  border-top-color: transparent;
+  &::before {
+    content: "";
+    position: absolute;
+    left: 0;
+    right: 0;
+    top: -1px;
+    height: 1px;
+    background: var(--border);
+    transform: scaleX(var(--e2));
+    transform-origin: left center;
+  }
+}
+
+@utility motion-marks {
+  opacity: calc(var(--e2) * 0.9);
+}
+
+@utility motion-mark {
+  position: absolute;
+  width: 1.75rem;
+  height: 1.75rem;
+  border-color: color-mix(in oklab, var(--foreground) 22%, transparent);
+  transition: none;
+}
+
+.motion-mark-tl {
+  top: 0;
+  left: 0;
+  border-top-width: 1px;
+  border-left-width: 1px;
+  transform: translate3d(calc((1 - var(--e2)) * -14px), calc((1 - var(--e2)) * -14px), 0);
+}
+.motion-mark-br {
+  right: 0;
+  bottom: 0;
+  border-right-width: 1px;
+  border-bottom-width: 1px;
+  transform: translate3d(calc((1 - var(--e2)) * 14px), calc((1 - var(--e2)) * 14px), 0);
+}
+
+@utility motion-link {
+  & span {
+    display: inline-block;
+    transition: transform 600ms var(--ease-lux);
+  }
+  &:hover span {
+    transform: translate3d(5px, -5px, 0);
+  }
+}
+
+@utility footer-rise {
+  position: relative;
+  z-index: 1;
+}
+
+@utility footer-title {
+  transition: transform 900ms var(--ease-lux);
+  &:hover {
+    transform: translate3d(18px, 0, 0);
+  }
+}
+
+@media (max-width: 63.99rem) {
+  .motion-line {
+    filter: blur(calc((1 - var(--le)) * 6px));
+    transform: translate3d(calc((1 - var(--le)) * var(--dir) * 0.18em), 0, 0);
+  }
+  .motion-stage {
+    transform: translate3d(0, calc(var(--x) * -3vh), 0);
+  }
+  .motion-scene:has(.motion-stage.grid) > div {
+    grid-template-rows: minmax(38svh, 0.8fr) minmax(0, 1.2fr);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .reveal-up { opacity: 1; transform: none; transition: none; }
+  .motion-scene, .motion-scene * {
+    filter: none !important;
+  }
+  .motion-line, .motion-stage, .motion-image, .motion-out, .motion-fade,
+  .motion-fade-late, .motion-meta-label, .motion-rule, .motion-axis,
+  .motion-marks, .motion-mark-tl, .motion-mark-br {
+    opacity: 1 !important;
+    transform: none !important;
+  }
+  .motion-veil { opacity: 0 !important; }
+  .motion-rule-x::before { transform: none !important; }
+  *, *::before, *::after { scroll-behavior: auto !important; animation-duration: 0.01ms !important; transition-duration: 0.01ms !important; }
+}
